@@ -1,6 +1,7 @@
 "use client";
 
 import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Table from "@tiptap/extension-table";
@@ -56,10 +57,16 @@ export const Editor = () => {
     },
     extensions: [
       StarterKit,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: "https://",
+      }),
       Color,
       Highlight.configure({multicolor: true}),
       Underline,
       Image,
+      ImageResize,
       FontFamily,
       TextStyle,
       ImageResize,

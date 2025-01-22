@@ -88,6 +88,16 @@ body {
 }
 
 .tiptap {
+  /* link styles */
+  a {
+    @apply text-blue-600;
+    cursor: pointer;
+
+    &:hover {
+      @apply underline;
+    }
+  }
+
   /* Image specific style */
   img {
     display: block;
