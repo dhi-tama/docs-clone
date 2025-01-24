@@ -53,7 +53,7 @@ const FontSizeButton = () => {
   const {editor} = useEditorStore();
 
   const currentFontSize = editor?.getAttributes("textStyle").fontSize
-    ? editor?.getAttributes("textStyles").fontSize.replace("px", "")
+    ? editor?.getAttributes("textStyle").fontSize.replace("px", "")
     : "16";
 
   const [fontSize, setFontSize] = useState(currentFontSize);
@@ -121,7 +121,7 @@ const FontSizeButton = () => {
             setIsEditing(true);
             setFontSize(currentFontSize);
           }}
-          className="text-sm text-center h-7 w-10 border border-neutral-400 rounded-sm bg-transparent cursor-text"
+          className="text-sm text-center h-7 w-10 border border-neutral-400 rounded-sm bg-transparent cursor-text hover:bg-neutral-200"
         >
           {currentFontSize}
         </button>
