@@ -12,42 +12,43 @@ import Image from "@tiptap/extension-image";
 import FontFamily from "@tiptap/extension-font-family";
 import ImageResize from "tiptap-extension-resize-image";
 import Underline from "@tiptap/extension-underline";
-import {Color} from "@tiptap/extension-color";
+import { Color } from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 
-import {useEditor, EditorContent} from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 
-import {useEditorStore} from "@/store/use-editor-store";
-import {FontSizeExtension} from "@/extensions/font-size";
+import { useEditorStore } from "@/store/use-editor-store";
+import { FontSizeExtension } from "@/extensions/font-size";
+import { LineHeightExtension } from "@/extensions/line-height";
 
 export const Editor = () => {
-  const {setEditor} = useEditorStore();
+  const { setEditor } = useEditorStore();
 
   const editor = useEditor({
-    onCreate({editor}) {
+    onCreate({ editor }) {
       setEditor(editor);
     },
     onDestroy() {
       setEditor(null);
     },
-    onUpdate({editor}) {
+    onUpdate({ editor }) {
       setEditor(editor);
     },
-    onSelectionUpdate({editor}) {
+    onSelectionUpdate({ editor }) {
       setEditor(editor);
     },
-    onTransaction({editor}) {
+    onTransaction({ editor }) {
       setEditor(editor);
     },
-    onFocus({editor}) {
+    onFocus({ editor }) {
       setEditor(editor);
     },
-    onBlur({editor}) {
+    onBlur({ editor }) {
       setEditor(editor);
     },
-    onContentError({editor}) {
+    onContentError({ editor }) {
       setEditor(editor);
     },
     editorProps: {
@@ -59,6 +60,10 @@ export const Editor = () => {
     },
     extensions: [
       StarterKit,
+      LineHeightExtension.configure({
+        types: ["heading", "paragraph"],
+        defaultLineHeight: "normal",
+      }),
       FontSizeExtension,
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -69,14 +74,14 @@ export const Editor = () => {
         defaultProtocol: "https://",
       }),
       Color,
-      Highlight.configure({multicolor: true}),
+      Highlight.configure({ multicolor: true }),
       Underline,
       Image,
       ImageResize,
       FontFamily,
       TextStyle,
       ImageResize,
-      TaskItem.configure({nested: true}),
+      TaskItem.configure({ nested: true }),
       TaskList,
       Table.configure({
         resizable: true,

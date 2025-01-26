@@ -26,10 +26,11 @@ import {
   ListOrderedIcon,
   MinusIcon,
   PlusIcon,
+  ListCollapseIcon,
 } from "lucide-react";
-import {cn} from "@/lib/utils";
-import {useEditorStore} from "@/store/use-editor-store";
-import {Separator} from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { useEditorStore } from "@/store/use-editor-store";
+import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,14 +44,66 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {type Level} from "@tiptap/extension-heading";
-import {type ColorResult, SketchPicker} from "react-color";
-import {useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import { type Level } from "@tiptap/extension-heading";
+import { type ColorResult, SketchPicker } from "react-color";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const LineHeightButton = () => {
+  const { editor } = useEditorStore();
+
+  const lineHeights = [
+    {
+      label: "Default",
+      value: "normal",
+    },
+    {
+      label: "Single",
+      value: "1",
+    },
+    {
+      label: "1.15",
+      value: "1.15",
+    },
+    {
+      label: "1.5",
+      value: "1.5",
+    },
+    {
+      label: "Double",
+      value: "2",
+    },
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex flex-col items-center justify-center text-sm h-7 min-w-7 rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden">
+          <ListCollapseIcon className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
+        {lineHeights.map(({ label, value }) => (
+          <button
+            key={value}
+            onClick={() => editor?.chain().focus().setLineHeight(value).run()}
+            className={cn(
+              "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+              editor?.getAttributes("paragraph").lineHeight === value &&
+                "bg-neutral-200/80",
+            )}
+          >
+            <span className="text-sm">{label}</span>
+          </button>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const FontSizeButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const currentFontSize = editor?.getAttributes("textStyle").fontSize
     ? editor?.getAttributes("textStyle").fontSize.replace("px", "")
@@ -137,7 +190,7 @@ const FontSizeButton = () => {
 };
 
 const ListButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const lists = [
     {
@@ -162,13 +215,13 @@ const ListButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
-        {lists.map(({label, icon: Icon, onClick, isActive}) => (
+        {lists.map(({ label, icon: Icon, onClick, isActive }) => (
           <button
             key={label}
             onClick={onClick}
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              isActive() && "bg-neutral-200/80"
+              isActive() && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -181,7 +234,7 @@ const ListButton = () => {
 };
 
 const AlignButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const alignments = [
     {
@@ -214,13 +267,13 @@ const AlignButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
-        {alignments.map(({label, value, icon: Icon}) => (
+        {alignments.map(({ label, value, icon: Icon }) => (
           <button
             key={value}
             onClick={() => editor?.chain().focus().setTextAlign(value).run()}
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              editor?.isActive({TextAlign: value}) && "bg-neutral-200/80"
+              editor?.isActive({ TextAlign: value }) && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -233,12 +286,12 @@ const AlignButton = () => {
 };
 
 const ImageButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
 
   const onChange = (src: string) => {
-    editor?.chain().focus().setImage({src}).run();
+    editor?.chain().focus().setImage({ src }).run();
   };
 
   const onUpload = () => {
@@ -321,11 +374,11 @@ const ImageButton = () => {
 };
 
 const LinkButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
   const [value, setValue] = useState("");
 
   const onChange = (href: string) => {
-    editor?.chain().focus().setLink({href}).run();
+    editor?.chain().focus().setLink({ href }).run();
     setValue("");
   };
 
@@ -355,12 +408,12 @@ const LinkButton = () => {
 };
 
 const HighlightColorButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const value = editor?.getAttributes("highlight")?.color || "#FFFFFF";
 
   const onChange = (color: ColorResult) => {
-    editor?.chain().focus().setHighlight({color: color.hex}).run();
+    editor?.chain().focus().setHighlight({ color: color.hex }).run();
   };
   return (
     <DropdownMenu>
@@ -377,7 +430,7 @@ const HighlightColorButton = () => {
 };
 
 const TextColorButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const value = editor?.getAttributes("textStyle")?.color || "#000000";
 
@@ -389,7 +442,7 @@ const TextColorButton = () => {
       <DropdownMenuTrigger asChild>
         <button className="flex flex-col items-center justify-center text-sm h-7 min-w-7 rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden">
           <span className="text-xs">A</span>
-          <div className="h-0.5 w-full" style={{backgroundColor: value}} />
+          <div className="h-0.5 w-full" style={{ backgroundColor: value }} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
@@ -400,7 +453,7 @@ const TextColorButton = () => {
 };
 
 const HeadingLevelButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const headings = [
     {
@@ -437,7 +490,7 @@ const HeadingLevelButton = () => {
 
   const getCurrentHeading = () => {
     for (let level = 1; level <= 5; level++) {
-      if (editor?.isActive("heading", {level})) {
+      if (editor?.isActive("heading", { level })) {
         return `Heading ${level}`;
       }
     }
@@ -452,7 +505,7 @@ const HeadingLevelButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
-        {headings.map(({label, value, fontSize}) => (
+        {headings.map(({ label, value, fontSize }) => (
           <button
             onClick={() => {
               if (value === 0) {
@@ -461,17 +514,17 @@ const HeadingLevelButton = () => {
                 editor
                   ?.chain()
                   .focus()
-                  .toggleHeading({level: value as Level})
+                  .toggleHeading({ level: value as Level })
                   .run();
               }
             }}
             key={value}
-            style={{fontSize}}
+            style={{ fontSize }}
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
               (value === 0 && !editor?.isActive("heading")) ||
-                (editor?.isActive("heading", {level: value}) &&
-                  "bg-neutral-200/80")
+                (editor?.isActive("heading", { level: value }) &&
+                  "bg-neutral-200/80"),
             )}
           >
             {label}
@@ -483,7 +536,7 @@ const HeadingLevelButton = () => {
 };
 
 const FontFamilyButton = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
   const fonts = [
     {
@@ -519,16 +572,16 @@ const FontFamilyButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
-        {fonts.map(({label, value}) => (
+        {fonts.map(({ label, value }) => (
           <button
             onClick={() => editor?.chain().focus().setFontFamily(value).run()}
             key={value}
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
               editor?.getAttributes("textStyle").fontFamily === value &&
-                "bg-neutral-200/80"
+                "bg-neutral-200/80",
             )}
-            style={{fontFamily: value}}
+            style={{ fontFamily: value }}
           >
             <span className="text-sm">{label}</span>
           </button>
@@ -544,13 +597,17 @@ interface ToolbarButtonProps {
   icon: LucideIcon;
 }
 
-const ToolbarButton = ({onClick, isActive, icon: Icon}: ToolbarButtonProps) => {
+const ToolbarButton = ({
+  onClick,
+  isActive,
+  icon: Icon,
+}: ToolbarButtonProps) => {
   return (
     <button
       onClick={onClick}
       className={cn(
         "flex items-center justify-center text-sm h-7 min-w-7 rounded-sm hover:bg-neutral-200/80",
-        isActive && "bg-neutral-200/80"
+        isActive && "bg-neutral-200/80",
       )}
     >
       <Icon className="size-4" />
@@ -559,9 +616,9 @@ const ToolbarButton = ({onClick, isActive, icon: Icon}: ToolbarButtonProps) => {
 };
 
 export const Toolbar = () => {
-  const {editor} = useEditorStore();
+  const { editor } = useEditorStore();
 
-  console.log("Toolbar editor:", {editor});
+  console.log("Toolbar editor:", { editor });
 
   const sections: {
     label: string;
@@ -592,7 +649,7 @@ export const Toolbar = () => {
           const current = editor?.view.dom.getAttribute("spellcheck");
           editor?.view.dom.setAttribute(
             "spellcheck",
-            current === "true" ? "false" : "true"
+            current === "true" ? "false" : "true",
           );
         },
       },
@@ -659,7 +716,7 @@ export const Toolbar = () => {
       <LinkButton />
       <ImageButton />
       <AlignButton />
-      {/* TODO: Line height */}
+      <LineHeightButton />
       <ListButton />
       {sections[2].map((item) => (
         <ToolbarButton key={item.label} {...item} />
